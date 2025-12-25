@@ -1,6 +1,7 @@
 package com.XtraCoder.Verve.service;
 
-import com.XtraCoder.Verve.dto.ActivityDto;
+import com.XtraCoder.Verve.dto.ActivityRequest;
+import com.XtraCoder.Verve.dto.ActivityResponse;
 import com.XtraCoder.Verve.entity.Activity;
 import com.XtraCoder.Verve.entity.User;
 import com.XtraCoder.Verve.exceptions.ResourceNotFoundExceptions;
@@ -17,31 +18,47 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ActivityService {
     
-    private final ActivityRepository actitvityRepository;
+    private final ActivityRepository activityRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
 
-    public ActivityDto trackActivity(String userId, ActivityDto activityTracker) {
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(()-> new ResourceNotFoundExceptions("User not found with id " + userId));
+//    public ActivityResponse trackActivity(String userId, ActivityRequest activityRequest) {
+//        User user = userRepository
+//                .findById(userId)
+//                .orElseThrow(()-> new ResourceNotFoundExceptions("User not found with id " + userId));
+//
+//        Activity activity = modelMapper.map(activityRequest, Activity.class);
+//        activity.setUser(user);
+//        activity =  activityRepository.save(activity);
+//        return modelMapper.map(activity, ActivityResponse.class);
+//    }
 
-        Activity activity = modelMapper.map(activityTracker, Activity.class);
-        activity.setUser(user);
-        activity =  actitvityRepository.save(activity);
-        return modelMapper.map(activity, ActivityDto.class);
+    public ActivityResponse trackActivity(ActivityRequest activityRequest) {
+        User user = userRepository.findById(activityRequest.getUserId())
+                .orElseThrow(()-> new ResourceNotFoundExceptions("User not found with id " + activityRequest.getUserId()));
+        Activity activity = Activity.builder()
+                .user(user)
+                .type(activityRequest.getType())
+                .duration(activityRequest.getDuration())
+                .caloriesBurned(activityRequest.getCaloriesBurned())
+                .startTime(activityRequest.getStartTime())
+                .additionalMetrics(activityRequest.getAdditionalMetrics())
+                .build();
+
+        Activity savedActivity = activityRepository.save(activity);
+        return modelMapper.map(savedActivity, ActivityResponse.class);
     }
 
-    public List<ActivityDto> getAllUserActivities(String userId){
+    public List<ActivityResponse> getUserActivities(String userId){
         //Check if user Exists or Not
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundExceptions("User not found with id " + userId));
         //If exists then return his activities
-        return actitvityRepository.findByUserId(userId)
+        return activityRepository.findByUserId(userId)
                 .stream()
-                .map(activity -> modelMapper.map(activity, ActivityDto.class))
+                .map(activity -> modelMapper.map(activity, ActivityResponse.class))
                 .collect(Collectors.toList());
     }
 }

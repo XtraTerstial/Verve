@@ -4,6 +4,7 @@ import com.XtraCoder.Verve.entity.enums.ActivityType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,6 +23,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Activity {
 
     @Id
@@ -43,6 +45,8 @@ public class Activity {
     @JoinColumn(name = "user-id", nullable = false, foreignKey = @ForeignKey(name = "fk_activity_user"))
     @JsonIgnore
     private User user;
+
+    private LocalDateTime startTime;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
