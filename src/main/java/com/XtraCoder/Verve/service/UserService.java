@@ -21,8 +21,6 @@ public class UserService {
                 .password(request.getPassword())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .createdAt(LocalDateTime.now()) // Use LocalDateTime to match your entity
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         User savedUser = userRepository.save(user);
