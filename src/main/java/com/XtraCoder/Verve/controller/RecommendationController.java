@@ -20,7 +20,7 @@ public class RecommendationController {
 
     @PostMapping
     public ResponseEntity<Recommendation> generateRecommendation(@RequestBody RecommendationRequest request){
-        Recommendation recommendation = recommendationService.generateRecommendation();
+        Recommendation recommendation = recommendationService.generateRecommendation(request);
         return ResponseEntity.ok(recommendation);
     }
 }
