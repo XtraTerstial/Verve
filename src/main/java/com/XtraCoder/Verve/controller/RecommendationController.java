@@ -6,10 +6,9 @@ import com.XtraCoder.Verve.service.RecommendationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/recommendation")
@@ -22,5 +21,17 @@ public class RecommendationController {
     public ResponseEntity<Recommendation> generateRecommendation(@RequestBody RecommendationRequest request){
         Recommendation recommendation = recommendationService.generateRecommendation(request);
         return ResponseEntity.ok(recommendation);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Recommendation>> getUserRecommendations(@PathVariable String userId){
+        List<Recommendation> userRecommendationList = recommendationService.getUserRecommendations(userId);
+        return ResponseEntity.ok(userRecommendationList);
+    }
+
+    @GetMapping("/activity/{activityId}")
+    public ResponseEntity<List<Recommendation>> getActivityRecommendations(@PathVariable String activityId){
+        List<Recommendation> activityRecommendations = recommendationService.getActivityRecommendations(activityId);
+        return ResponseEntity.ok(activityRecommendations);
     }
 }

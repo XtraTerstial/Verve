@@ -51,14 +51,19 @@ public class ActivityService {
     }
 
     public List<ActivityResponse> getUserActivities(String userId){
-        //Check if user Exists or Not
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(()-> new ResourceNotFoundExceptions("User not found with id " + userId));
+//        //Check if user Exists or Not
+//        User user = userRepository
+//                .findById(userId)
+//                .orElseThrow(()-> new ResourceNotFoundExceptions("User not found with id " + userId));
+        // 1. Light-weight check: Does the user exist at all?
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundExceptions("User not found with id " + userId);
+        }
         //If exists then return his activities
         return activityRepository.findByUserId(userId)
                 .stream()
                 .map(activity -> modelMapper.map(activity, ActivityResponse.class))
                 .collect(Collectors.toList());
     }
+
 }
